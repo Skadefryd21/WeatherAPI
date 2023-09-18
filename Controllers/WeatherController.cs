@@ -3,6 +3,7 @@ using WeatherAPI.Models;
 using Newtonsoft.Json;
 using System;
 using Microsoft.AspNetCore.Mvc.Diagnostics;
+using Microsoft.AspNetCore.Mvc.ViewEngines;
 
 namespace WeatherAPI.Controllers
 {
@@ -27,13 +28,20 @@ namespace WeatherAPI.Controllers
 
             string json = await response.Content.ReadAsStringAsync();
 
-            json.Split(",");//Where to split?
+            string[] splitArray = json.Split(",");//Where to split?
 
-            //TODO: After split, figure out how to assign values to correct properties in "temp"
+            
+            foreach (var i in splitArray)
+            {
+                temp.Weather += i;
+            }
 
             return View(temp);
+            //TODO: InvalidOperationException: The view 'GetWeather' was not found. The following locations were searched:/ Views / Weather / GetWeather.cshtml/ Views / Shared / GetWeather.cshtml
+
+            //TODO: After split, figure out how to assign values to correct properties in "temp"
         }
-            public IActionResult Index()
+        public IActionResult Index()
         {
             return View("./Views/Home/Index.cshtml");
         }
