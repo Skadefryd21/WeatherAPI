@@ -2,6 +2,9 @@
 using WeatherAPI.Models;
 using Newtonsoft.Json;
 using System;
+using System.Data;
+using System.IO;
+using System.Text;
 using Microsoft.AspNetCore.Mvc.Diagnostics;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 
@@ -9,8 +12,6 @@ namespace WeatherAPI.Controllers
 {
     public class WeatherController : Controller
     {
-
-        SearchWeatherVM temp = new SearchWeatherVM();
 
         string img;
 
@@ -28,71 +29,27 @@ namespace WeatherAPI.Controllers
         public async Task<IActionResult> GetWeather(SearchModel searchInput) //TODO: NULL reference, nothing passed through searchInput
         {
 
-            HttpResponseMessage geolocate = _httpClient.GetAsync(
+            //Geolocate location
+            HttpResponseMessage responseGeo = _httpClient.GetAsync(
                 @"http://api.openweathermap.org/geo/1.0/direct?q=" + searchInput.CityName + "," + searchInput.StateCode + "," + searchInput.CountryCode + "&limit=1&appid=" + api).Result;
 
-            string geoJson = await geolocate.Content.ReadAsStringAsync();
-            geoJson.ToLower();
+            //TDO: The response body has to be converted into a json file that will then be used as the deserialization object later on
 
-            string[] splitGeo = geoJson.Split(",", StringSplitOptions.TrimEntries);
+            //Deserialize
+            var jsonGeo = JsonConvert.DeserializeObject<WeatherModel>(responseGeo.Content.ReadAsStringAsync().Result);
 
-            foreach (string s in splitGeo)
-            {
-                if (s.Contains("lat"))
-                {
-                    temp.WeatherModel.Lat = s.Remove(0, 6);
-                }
-
-                if (s.Contains("lon"))
-                {
-                    temp.WeatherModel.Lon = s.Remove(0, 6);
-                }
-            }
-
+            //Get data of location
             HttpResponseMessage response = _httpClient.GetAsync(
-                @"https://api.openweathermap.org/data/2.5/weather?lat=" + temp.WeatherModel.Lat + "&lon=" + temp.WeatherModel.Lon + "&appid=" + api).Result;
+                @"https://api.openweathermap.org/data/2.5/weather?lat=" + jsonGeo.Lat + "&lon=" + jsonGeo.Lon + "&appid=" + api).Result;
 
-            string json = await response.Content.ReadAsStringAsync();
-            json.ToLower();
+            //Deserialize
+            var json = JsonConvert.DeserializeObject<WeatherModel>(response.Content.ReadAsStringAsync().Result);
 
-            string[] splitArray = json.Split(",", StringSplitOptions.TrimEntries);
-
-
-            //TODO: Remove unnecessary string using Remove();
-            foreach (string s in splitArray)
-            {
-                if (s.Contains("description"))
-                {
-                    temp.WeatherModel.Weather = s;  
-                }
-
-                if (s.Contains("humidity"))
-                {
-                    temp.WeatherModel.Humidity = s;
-                }
-
-                if (s.Contains("name"))
-                {
-                    temp.WeatherModel.City = s;
-                }
-
-                if (s.Contains("country"))
-                {
-                    temp.WeatherModel.Country = s;
-                }
-
-                if (s.Contains("icon"))
-                {
-                    s.Remove(0, 5);
-                    img = $"{s}@2x.png.crdownload";
-                }
-            }
-
-
-
+            //Set png
             ViewData["ImgSrc"] = img;
 
-            return View("./Views/Home/Index.cshtml", temp);
+            //Return data to view
+            return View("./Views/Home/Index.cshtml", json);
         }
         public IActionResult Index()
         {
