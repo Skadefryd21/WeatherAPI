@@ -10,8 +10,14 @@ namespace WeatherAPI.Controllers
     public class WeatherController : Controller
     {
 
+        WeatherModel temp = new WeatherModel();
+
+        string img;
 
         private readonly HttpClient _httpClient;
+
+        string api = "61f40f4bee18a859511f01d87cbbc524";
+
 
         public WeatherController()
         {
@@ -19,30 +25,72 @@ namespace WeatherAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetWeather(WeatherModel input)
+        public async Task<IActionResult> GetWeather(SearchModel searchInput)
         {
 
-            HttpResponseMessage response = _httpClient.GetAsync(@"https://api.openweathermap.org/data/2.5/weather?lat=" + input.Lat + "&lon=" + input.Lon + "&appid=cde7e8e92f266f62433a2bf35ee88590").Result;
+            HttpResponseMessage geolocate = _httpClient.GetAsync(
+                @"http://api.openweathermap.org/geo/1.0/direct?q=" + searchInput.CityName + "," + searchInput.StateCode + "," + searchInput.CountryCode + "&limit=1&appid=" + api).Result;
 
-            WeatherModel temp = new WeatherModel();
+            string geoJson = await geolocate.Content.ReadAsStringAsync();
+            geoJson.ToLower();
+            
+            string[] splitGeo = geoJson.Split(",", StringSplitOptions.TrimEntries);
+
+            foreach (string s in splitGeo)
+            {
+                if (s.Contains("lat"))
+                {
+                    temp.Lat = 
+                }
+
+                if (s.Contains("lon"))
+                {
+                    temp.Lon = 
+                }
+            }
+
+            HttpResponseMessage response = _httpClient.GetAsync(
+                @"https://api.openweathermap.org/data/2.5/weather?lat=" + temp.Lat + "&lon=" + temp.Lon + "&appid=" + api).Result;
 
             string json = await response.Content.ReadAsStringAsync();
 
-            string[] splitArray = json.Split(",");//Where to split?
+            json.ToLower();
 
-            
-            foreach (var i in splitArray)
+            string[] splitArray = json.Split(",", StringSplitOptions.TrimEntries);
+
+
+
+
+
+            foreach (string s in splitArray)
             {
-                temp.Weather += i;
+                if (s.Contains("description"))
+                {
+                    temp.Weather = s;  
+                }
+
+                if (s.Contains("humidity"))
+                {
+                    temp.Humidity = s;
+                }
+
+                if (s.Contains("name"))
+                {
+                    temp.City = s;
+                }
+
+                if (s.Contains("country"))
+                {
+                    temp.Country = s;
+                }
             }
+            ViewData["ImgSrc"] = img;
 
-            return View(temp);
-            //TODO: InvalidOperationException: The view 'GetWeather' was not found. The following locations were searched:/ Views / Weather / GetWeather.cshtml/ Views / Shared / GetWeather.cshtml
-
-            //TODO: After split, figure out how to assign values to correct properties in "temp"
+            return View("./Views/Home/Index.cshtml", temp);
         }
         public IActionResult Index()
         {
+
             return View("./Views/Home/Index.cshtml");
         }
     }
