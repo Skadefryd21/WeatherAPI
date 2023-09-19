@@ -2,7 +2,7 @@
 {
     public class SearchWeatherVM
     {
-        public SearchModel SearchModel { get; set; }
-        public WeatherModel WeatherModel { get; set; }
+        public SearchModel SearchModel { get; set; } = new SearchModel();
+        public WeatherModel WeatherModel { get; set; } = new WeatherModel();
     }
 }

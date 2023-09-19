@@ -10,7 +10,7 @@ namespace WeatherAPI.Controllers
     public class WeatherController : Controller
     {
 
-        WeatherModel temp = new WeatherModel();
+        SearchWeatherVM temp = new SearchWeatherVM();
 
         string img;
 
@@ -25,7 +25,7 @@ namespace WeatherAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetWeather(SearchModel searchInput)
+        public async Task<IActionResult> GetWeather(SearchModel searchInput) //TODO: NULL reference, nothing passed through searchInput
         {
 
             HttpResponseMessage geolocate = _httpClient.GetAsync(
@@ -33,57 +33,63 @@ namespace WeatherAPI.Controllers
 
             string geoJson = await geolocate.Content.ReadAsStringAsync();
             geoJson.ToLower();
-            
+
             string[] splitGeo = geoJson.Split(",", StringSplitOptions.TrimEntries);
 
             foreach (string s in splitGeo)
             {
                 if (s.Contains("lat"))
                 {
-                    temp.Lat = 
+                    temp.WeatherModel.Lat = s.Remove(0, 6);
                 }
 
                 if (s.Contains("lon"))
                 {
-                    temp.Lon = 
+                    temp.WeatherModel.Lon = s.Remove(0, 6);
                 }
             }
 
             HttpResponseMessage response = _httpClient.GetAsync(
-                @"https://api.openweathermap.org/data/2.5/weather?lat=" + temp.Lat + "&lon=" + temp.Lon + "&appid=" + api).Result;
+                @"https://api.openweathermap.org/data/2.5/weather?lat=" + temp.WeatherModel.Lat + "&lon=" + temp.WeatherModel.Lon + "&appid=" + api).Result;
 
             string json = await response.Content.ReadAsStringAsync();
-
             json.ToLower();
 
             string[] splitArray = json.Split(",", StringSplitOptions.TrimEntries);
 
 
-
-
-
+            //TODO: Remove unnecessary string using Remove();
             foreach (string s in splitArray)
             {
                 if (s.Contains("description"))
                 {
-                    temp.Weather = s;  
+                    temp.WeatherModel.Weather = s;  
                 }
 
                 if (s.Contains("humidity"))
                 {
-                    temp.Humidity = s;
+                    temp.WeatherModel.Humidity = s;
                 }
 
                 if (s.Contains("name"))
                 {
-                    temp.City = s;
+                    temp.WeatherModel.City = s;
                 }
 
                 if (s.Contains("country"))
                 {
-                    temp.Country = s;
+                    temp.WeatherModel.Country = s;
+                }
+
+                if (s.Contains("icon"))
+                {
+                    s.Remove(0, 5);
+                    img = $"{s}@2x.png.crdownload";
                 }
             }
+
+
+
             ViewData["ImgSrc"] = img;
 
             return View("./Views/Home/Index.cshtml", temp);
