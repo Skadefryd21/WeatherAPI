@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WeatherAPI.Models;
+using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 using System;
 using System.Data;
@@ -7,6 +8,9 @@ using System.IO;
 using System.Text;
 using Microsoft.AspNetCore.Mvc.Diagnostics;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
+using System.Collections.Generic;
+using System.Text.Json.Nodes;
+using System.IO.Compression;
 
 namespace WeatherAPI.Controllers
 {
@@ -26,30 +30,20 @@ namespace WeatherAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetWeather(SearchModel searchInput) //TODO: NULL reference, nothing passed through searchInput
+        public async Task<IActionResult> GetWeather(SearchWeatherVM searchInput)
         {
 
             //Geolocate location
-            HttpResponseMessage responseGeo = _httpClient.GetAsync(
-                @"http://api.openweathermap.org/geo/1.0/direct?q=" + searchInput.CityName + "," + searchInput.StateCode + "," + searchInput.CountryCode + "&limit=1&appid=" + api).Result;
+            var responseGeo = _httpClient.GetFromJsonAsync<WeatherModel[]>($"http://api.openweathermap.org/geo/1.0/direct?q={searchInput.SearchModel.CityName},{searchInput.SearchModel.StateCode},{searchInput.SearchModel.CountryCode}&limit=1&appid={api}").Result;
 
-            //TDO: The response body has to be converted into a json file that will then be used as the deserialization object later on
-
-            //Deserialize
-            var jsonGeo = JsonConvert.DeserializeObject<WeatherModel>(responseGeo.Content.ReadAsStringAsync().Result);
-
-            //Get data of location
-            HttpResponseMessage response = _httpClient.GetAsync(
-                @"https://api.openweathermap.org/data/2.5/weather?lat=" + jsonGeo.Lat + "&lon=" + jsonGeo.Lon + "&appid=" + api).Result;
-
-            //Deserialize
-            var json = JsonConvert.DeserializeObject<WeatherModel>(response.Content.ReadAsStringAsync().Result);
-
+            //Get deserialized data of location
+            var response = _httpClient.GetFromJsonAsync<WeatherModel>($"https://api.openweathermap.org/data/2.5/weather?lat={responseGeo[0].Lat}&lon={responseGeo[0].Lon}&appid={api}").Result;
+            
             //Set png
             ViewData["ImgSrc"] = img;
 
             //Return data to view
-            return View("./Views/Home/Index.cshtml", json);
+            return View("./Views/Home/Index.cshtml", response);
         }
         public IActionResult Index()
         {
