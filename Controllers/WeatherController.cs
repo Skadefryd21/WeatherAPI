@@ -18,6 +18,8 @@ namespace WeatherAPI.Controllers
     {
         private string img;
 
+        SearchWeatherVM searchWeatherVM = new SearchWeatherVM();
+
         private readonly string _apiKey;
 
         private readonly HttpClient _httpClient;
@@ -38,10 +40,11 @@ namespace WeatherAPI.Controllers
 
             //Get deserialized data of location
             var response = await _httpClient.GetFromJsonAsync<WeatherModel>($"https://api.openweathermap.org/data/2.5/weather?lat={responseGeo[0].Lat}&lon={responseGeo[0].Lon}&appid={_apiKey}");
-            
-            SearchWeatherVM searchWeatherVM = new SearchWeatherVM();
-
-            searchWeatherVM.WeatherModel = response;
+           
+            if ( response != null )
+            {
+                searchWeatherVM.WeatherModel = response;
+            }
 
             //Set png
             ViewData["ImgSrc"] = img;
