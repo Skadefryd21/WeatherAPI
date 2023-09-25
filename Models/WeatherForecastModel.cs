@@ -13,8 +13,6 @@ namespace WeatherAPI.Models
             [DisplayName("Summary")]
             public string Summary { get; set; }
 
-            public Temp _Temp { get; set; }
-
             [JsonPropertyName("humidity")]
             [DisplayName("Humidity")]
             public double Humidity { get; set; }
@@ -26,6 +24,10 @@ namespace WeatherAPI.Models
             [JsonPropertyName("clouds")]
             [DisplayName("Clouds")]
             public double Clouds { get; set; }
+
+
+            [JsonPropertyName("temp")]
+            public Temp _Temp { get; set; }
 
             [JsonPropertyName("weather")]
             [DisplayName("Weather description")]

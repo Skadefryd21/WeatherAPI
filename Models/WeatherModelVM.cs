@@ -6,9 +6,11 @@ namespace WeatherAPI.Models
 {
     public class WeatherModelVM
     {
-        public CurrentModel CurrentWeather { get; set; } = new CurrentModel();
+        [JsonPropertyName("current")]
+        public CurrentModel CurrentWeather { get; set; }
 
-        public WeatherForecastModel WeatherForecast { get; set; } = new WeatherForecastModel();
+        [JsonPropertyName("daily")]
+        public WeatherForecastModel[] WeatherForecast { get; set; }
     }
 
 }
