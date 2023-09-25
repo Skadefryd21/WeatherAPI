@@ -6,27 +6,25 @@ namespace WeatherAPI.Models
 {
     public class WeatherModel
     {
+        [JsonPropertyName("sys")]
+        public SysModel Sys { get; set; }
 
-        [JsonPropertyName("lon")]
-        public string Lon { get; set; }
-        [JsonPropertyName("lat")]
-        public string Lat { get; set; }
+        [JsonPropertyName("main")]
+        public MainModel Main { get; set; }
 
-        [JsonPropertyName("country")]
-        public string Country { get; set; }
         [JsonPropertyName("name")]
         public string City { get; set; }
 
-        [JsonPropertyName("humidity")]
-        public string? Humidity { get; set; }
         [JsonPropertyName("weather")]
-        public List<Weathers>? WeatherList{ get; set; }
+        [DisplayName("Current weather")]
+        public Weathers[]? WeatherArray{ get; set; }
     }
 
     public class Weathers
     {
-        [DisplayName("Current weather")]
+        
         [JsonPropertyName("description")]
+        [DisplayName("Current weather")]
         public string? Weather { get; set; }
 
         [JsonPropertyName("icon")]

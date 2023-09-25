@@ -16,17 +16,17 @@ namespace WeatherAPI.Controllers
 {
     public class WeatherController : Controller
     {
+        private string img;
 
-        string img;
+        private readonly string _apiKey;
 
         private readonly HttpClient _httpClient;
 
-        string api = "61f40f4bee18a859511f01d87cbbc524";
-
-
-        public WeatherController()
+        public WeatherController(string apiKey)
         {
-            _httpClient = new HttpClient();
+            _apiKey = apiKey;
+
+            _httpClient = new HttpClient(); 
         }
 
         [HttpPost]
@@ -34,16 +34,20 @@ namespace WeatherAPI.Controllers
         {
 
             //Geolocate location
-            var responseGeo = _httpClient.GetFromJsonAsync<WeatherModel[]>($"http://api.openweathermap.org/geo/1.0/direct?q={searchInput.SearchModel.CityName},{searchInput.SearchModel.StateCode},{searchInput.SearchModel.CountryCode}&limit=1&appid={api}").Result;
+            var responseGeo = await _httpClient.GetFromJsonAsync<GeocodingModel[]>($"http://api.openweathermap.org/geo/1.0/direct?q={searchInput.SearchModel.CityName},{searchInput.SearchModel.StateCode},{searchInput.SearchModel.CountryCode}&limit=1&appid={_apiKey}");
 
             //Get deserialized data of location
-            var response = _httpClient.GetFromJsonAsync<WeatherModel>($"https://api.openweathermap.org/data/2.5/weather?lat={responseGeo[0].Lat}&lon={responseGeo[0].Lon}&appid={api}").Result;
+            var response = await _httpClient.GetFromJsonAsync<WeatherModel>($"https://api.openweathermap.org/data/2.5/weather?lat={responseGeo[0].Lat}&lon={responseGeo[0].Lon}&appid={_apiKey}");
             
+            SearchWeatherVM searchWeatherVM = new SearchWeatherVM();
+
+            searchWeatherVM.WeatherModel = response;
+
             //Set png
             ViewData["ImgSrc"] = img;
-
+            
             //Return data to view
-            return View("./Views/Home/Index.cshtml", response);
+            return View("./Views/Home/Index.cshtml", searchWeatherVM);
         }
         public IActionResult Index()
         {
