@@ -3,6 +3,9 @@
     public class SearchWeatherVM
     {
         public SearchModel SearchModel { get; set; } = new SearchModel();
-        public WeatherModel WeatherModel { get; set; } = new WeatherModel();
+
+        public WeatherModelVM WeatherModelVM { get; set; } = new WeatherModelVM();
+
+        ViewData["ImgSrc"]
     }
 }
