@@ -14,7 +14,7 @@ namespace WeatherAPI
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
-            builder.Services.AddSingleton<string>("61f40f4bee18a859511f01d87cbbc524");
+            builder.Services.AddSingleton<string>("cde7e8e92f266f62433a2bf35ee88590");
 
             var app = builder.Build();
 

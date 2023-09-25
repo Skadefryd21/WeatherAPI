@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Mvc.ViewEngines;
 using System.Collections.Generic;
 using System.Text.Json.Nodes;
 using System.IO.Compression;
+using System.ComponentModel;
+using static System.Net.WebRequestMethods;
 
 namespace WeatherAPI.Controllers
 {
@@ -39,12 +41,28 @@ namespace WeatherAPI.Controllers
             var responseGeo = await _httpClient.GetFromJsonAsync<GeocodingModel[]>($"http://api.openweathermap.org/geo/1.0/direct?q={searchInput.SearchModel.CityName},{searchInput.SearchModel.StateCode},{searchInput.SearchModel.CountryCode}&limit=1&appid={_apiKey}");
 
             //Get deserialized data of location
-            var response = await _httpClient.GetFromJsonAsync<WeatherModel>($"https://api.openweathermap.org/data/2.5/weather?lat={responseGeo[0].Lat}&lon={responseGeo[0].Lon}&appid={_apiKey}");
+            var response = await _httpClient.GetFromJsonAsync<WeatherModel>($"https://api.openweathermap.org/data/3.0/onecall?lat={responseGeo[0].Lat}&lon={responseGeo[0].Lon}&exclude=hourly,minutely,alerts&appid={_apiKey}");
            
+
+            //Prep current and forecast properties for index
             if ( response != null )
             {
                 searchWeatherVM.WeatherModel = response;
+
+                searchWeatherVM.WeatherModel.Current.Temp = Convert.ToDouble((searchWeatherVM.WeatherModel.Current.Temp -272.15).ToString().Remove(4));
+
+                img = $"https://openweathermap.org/img/wn/{searchWeatherVM.WeatherModel.Current.WeatherArray[0].Icon}.png";
+
+                foreach (Date date in searchWeatherVM.WeatherModel.Forecast.Dates)
+                {
+                    img = $"https://openweathermap.org/img/wn/{date.WeatherArray[0].Icon}.png";
+
+                    //TODO: _Temp is of Temp class that has Min and Max
+                    date._Temp = Convert.ToDouble((date._Temp - 272.15).ToString().Remove(4));
+                }
             }
+
+
 
             //Set png
             ViewData["ImgSrc"] = img;

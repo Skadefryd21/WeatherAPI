@@ -32,33 +32,41 @@
 </div>
 <div class="row">
     <dt class="col-sm-2">
-        @Html.DisplayNameFor(model => model.WeatherModel.WeatherArray)
+        @Html.DisplayNameFor(model => model.WeatherModel.Current.Clouds)
     </dt>
     <dd class="col-sm-10">
-        @Html.DisplayFor(model => model.WeatherModel.WeatherArray)
+        @Html.DisplayFor(model => model.WeatherModel.Current.Clouds)
     </dd>
 
     <dt class="col-sm-2">
-        @Html.DisplayNameFor(model => model.WeatherModel.Main.Humidity)
+        @Html.DisplayNameFor(model => model.WeatherModel.Current.Humidity)
     </dt>
     <dd class="col-sm-10">
-        @Html.DisplayFor(model => model.WeatherModel.Main.Humidity)
+        @Html.DisplayFor(model => model.WeatherModel.Current.Humidity)
     </dd>
 
     <dt class="col-sm-2">
-        @Html.DisplayNameFor(model => model.WeatherModel.Sys.Country)
+        @Html.DisplayNameFor(model => model.WeatherModel.Current.Temp)
     </dt>
     <dd class="col-sm-10">
-        @Html.DisplayFor(model => model.WeatherModel.Sys.Country)
+        @Html.DisplayFor(model => model.WeatherModel.Current.Temp)
     </dd>
 
     <dt class="col-sm-2">
-        @Html.DisplayNameFor(model => model.WeatherModel.City)
+        @Html.DisplayNameFor(model => model.WeatherModel.Current.WeatherArray)
     </dt>
     <dd class="col-sm-10">
-        @Html.DisplayFor(model => model.WeatherModel.City)
+        @Html.DisplayFor(model => model.WeatherModel.Current.WeatherArray)
+    </dd>
+
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.WeatherModel.Current.Wind_Speed)
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.WeatherModel.Current.Wind_Speed)
     </dd>
 </div>
+
 <div>
     <img src="@ViewData["ImgSrc"]" class="img" asp-append-version="true">
 </div>

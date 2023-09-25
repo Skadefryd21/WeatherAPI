@@ -6,28 +6,78 @@ namespace WeatherAPI.Models
 {
     public class WeatherModel
     {
-        [JsonPropertyName("sys")]
-        public SysModel Sys { get; set; }
+        public Current Current { get; set; }
 
-        [JsonPropertyName("main")]
-        public MainModel Main { get; set; }
+        public WeatherForecast Forecast { get; set; }
+    }
+    public class Current
+    {
+        [JsonPropertyName("temp")]
+        [DisplayName("Temperature")]
+        public double Temp { get; set; }
 
-        [JsonPropertyName("name")]
-        public string City { get; set; }
+        [JsonPropertyName("humidity")]
+        [DisplayName("Humidity")]
+        public double Humidity { get; set; }
+
+        [JsonPropertyName("clouds")]
+        [DisplayName("Clouds")]
+        public double Clouds { get; set; }
+
+        [JsonPropertyName("wind_speed")]
+        [DisplayName("Wind speed")]
+        public double Wind_Speed { get; set; }
 
         [JsonPropertyName("weather")]
-        [DisplayName("Current weather")]
-        public Weathers[]? WeatherArray{ get; set; }
+        [DisplayName("Weather description")]
+        public Weather[]? WeatherArray { get; set; }
+
     }
 
-    public class Weathers
+    public class WeatherForecast
     {
-        
+        public List<Date>? Dates { get; set; }
+    }
+
+    public class Date
+    {
+        [JsonPropertyName("summary")]
+        [DisplayName("Summary")]
+        public string Summary { get; set; }
+
+        public Temp _Temp { get; set; }
+
+        [JsonPropertyName("humidity")]
+        [DisplayName("Humidity")]
+        public double Humidity { get; set; }
+
+        [JsonPropertyName("wind_speed")]
+        [DisplayName("Wind speed")]
+        public double Wind_Speed { get; set; }
+
+        [JsonPropertyName("clouds")]
+        [DisplayName("Clouds")]
+        public double Clouds { get; set; }
+
+        [JsonPropertyName("weather")]
+        [DisplayName("Weather description")]
+        public Weather[]? WeatherArray { get; set; }
+    }
+
+    public class Weather
+    {
+
         [JsonPropertyName("description")]
-        [DisplayName("Current weather")]
-        public string? Weather { get; set; }
+        public string? Description { get; set; }
 
         [JsonPropertyName("icon")]
-        public string? icon { get; set; }
+        public string Icon { get; set; }
+    }
+
+    public class Temp
+    {
+        public double Min { get; set; }
+
+        public double Max { get; set; }
     }
 }
