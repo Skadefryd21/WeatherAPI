@@ -6,6 +6,6 @@
 
         public WeatherModelVM WeatherModelVM { get; set; } = new WeatherModelVM();
 
-        ViewData["ImgSrc"]
+
     }
 }
