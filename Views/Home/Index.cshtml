@@ -5,6 +5,8 @@
     ViewData["Title"] = "Weather Explorer!";
 }
 
+<h1>Search</h1>
+
 <div class="row">
     <div class="col-md-4">
         <form asp-action="GetWeather">
@@ -30,43 +32,86 @@
         </form>
     </div>
 </div>
+<hr />
+
+<h1>Todays weather</h1>
+
 <div class="row">
     <dt class="col-sm-2">
-        @Html.DisplayNameFor(model => model.WeatherModelVM.CurrentWeather.Clouds)
+        @Html.DisplayNameFor(model => model.WeatherModel.Current.weather[0].main)
     </dt>
     <dd class="col-sm-10">
-        @Html.DisplayFor(model => model.WeatherModelVM.CurrentWeather.Clouds)
+        @Html.DisplayFor(model => model.WeatherModel.Current.weather[0].main)
     </dd>
 
     <dt class="col-sm-2">
-        @Html.DisplayNameFor(model => model.WeatherModelVM.CurrentWeather.Humidity)
+        @Html.DisplayNameFor(model => model.WeatherModel.Current.uvi)
     </dt>
     <dd class="col-sm-10">
-        @Html.DisplayFor(model => model.WeatherModelVM.CurrentWeather.Humidity)
+        @Html.DisplayFor(model => model.WeatherModel.Current.uvi)
     </dd>
 
     <dt class="col-sm-2">
-        @Html.DisplayNameFor(model => model.WeatherModelVM.CurrentWeather.Temp)
+        @Html.DisplayNameFor(model => model.WeatherModel.Current.clouds)
     </dt>
     <dd class="col-sm-10">
-        @Html.DisplayFor(model => model.WeatherModelVM.CurrentWeather.Temp)
+        @Html.DisplayFor(model => model.WeatherModel.Current.clouds)
     </dd>
 
     <dt class="col-sm-2">
-        @Html.DisplayNameFor(model => model.WeatherModelVM.CurrentWeather.WeatherArray)
+        @Html.DisplayNameFor(model => model.WeatherModel.Current.humidity)
     </dt>
     <dd class="col-sm-10">
-        @Html.DisplayFor(model => model.WeatherModelVM.CurrentWeather.WeatherArray)
+        @Html.DisplayFor(model => model.WeatherModel.Current.humidity)
     </dd>
 
     <dt class="col-sm-2">
-        @Html.DisplayNameFor(model => model.WeatherModelVM.CurrentWeather.Wind_Speed)
+        @Html.DisplayNameFor(model => model.WeatherModel.Current.temp)
     </dt>
     <dd class="col-sm-10">
-        @Html.DisplayFor(model => model.WeatherModelVM.CurrentWeather.Wind_Speed)
+        @Html.DisplayFor(model => model.WeatherModel.Current.temp)
+    </dd>
+
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.WeatherModel.Current.wind_speed)
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.WeatherModel.Current.wind_speed)
     </dd>
 </div>
 
 <div>
     <img src="@ViewData["ImgSrc"]" class="img" asp-append-version="true">
 </div>
+
+<hr />
+
+<h1>Weather forecast</h1>
+
+<div class="row">
+    @if (Model != null && Model.WeatherModel != null && Model.WeatherModel.WeatherForecast != null)
+    {
+        @for (int i = 0; i < Model.WeatherModel.WeatherForecast.Count; i++)
+        {
+            <div class="col-sm-2" style="padding-top: 20px">
+                <div class="card border-dark">
+                    <img class="card-img-top" src="@Model.WeatherModel.WeatherForecast[i].weather[0].iconURL">
+                    <div class="card-header">@Html.DisplayFor(modelItem => modelItem.WeatherModel.WeatherForecast[i].summary)</div>
+                    <div class="card-body">
+                        <p class="card-text">Max temperature: @Html.DisplayFor(modelItem => modelItem.WeatherModel.WeatherForecast[i].temp.max)</p>
+                        <p class="card-text">Min temperature: @Html.DisplayFor(modelItem => modelItem.WeatherModel.WeatherForecast[i].temp.min)</p>
+                        <p class="card-text">Humidity: @Html.DisplayFor(modelItem => modelItem.WeatherModel.WeatherForecast[i].humidity)</p>
+                        <p class="card-text">Wind Speeds: @Html.DisplayFor(modelItem => modelItem.WeatherModel.WeatherForecast[i].wind_speed)</p>
+                        <a class="btn btn-success btn-sm" asp-action="Details" asp-route-id="@Model.WeatherModel.WeatherForecast[i].dt">Details</a>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <p>No weather forecast available.</p>
+    }
+</div>
+
+

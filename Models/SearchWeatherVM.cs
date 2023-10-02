@@ -4,8 +4,6 @@
     {
         public SearchModel SearchModel { get; set; } = new SearchModel();
 
-        public WeatherModelVM WeatherModelVM { get; set; } = new WeatherModelVM();
-
-
+        public RootObject WeatherModel { get; set; } = new RootObject();
     }
 }
